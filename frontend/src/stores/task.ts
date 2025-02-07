@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/plugins/axios'
+import { useAuthStore } from './auth'
 
 interface Task {
   id: number
@@ -12,15 +13,14 @@ interface Task {
   user: string | null
 }
 
-interface TaskStats {
-  pending: number
-  completed: number
+type NewTask = Omit<Task, 'id' | 'created_at'> & {
+  user: string | null;
 }
 
 interface TaskFilters {
-  status?: string
-  priority?: number
-  user?: string | null
+  status?: string;
+  priority?: number;
+  user?: string | null;
 }
 
 export const useTaskStore = defineStore('task', {
@@ -28,19 +28,20 @@ export const useTaskStore = defineStore('task', {
     tasks: [] as Task[],
     loading: false,
     error: null as string | null,
-    taskStats: {
-      pending: 0,
-      completed: 0
-    } as TaskStats
   }),
-
+  
   getters: {
+    pendingTasks: (state) => state.tasks.filter(task => task.status === 'PENDING'),
+    completedTasks: (state) => state.tasks.filter(task => task.status === 'COMPLETED'),
+    taskStats: (state) => ({
+      pending: state.tasks.filter(task => task.status === 'PENDING').length,
+      completed: state.tasks.filter(task => task.status === 'COMPLETED').length,
+    }),
     sortedTasks: (state) => {
       const statusOrder = {
         'IN_PROGRESS': 0,
         'PENDING': 1,
         'COMPLETED': 2,
-        'CANCELLED': 3
       }
       
       return [...state.tasks].sort((a, b) => 
@@ -49,86 +50,97 @@ export const useTaskStore = defineStore('task', {
       )
     }
   },
-
+  
   actions: {
     async fetchTasks() {
       this.loading = true
       try {
         const response = await axios.get('/pending-tasks/')
-        this.tasks = response.data
-        this.updateTaskStats()
+        const authStore = useAuthStore()
+        this.tasks = response.data.map((task: Task) => ({
+          ...task,
+          user: authStore.userEmail || task.user
+        }))
       } catch (error: any) {
         this.error = error.message
       } finally {
         this.loading = false
+      }
+    },
+    
+    async addTask(task: NewTask) {
+      const authStore = useAuthStore()
+      try {
+        const response = await axios.post('http://localhost:8000/pending-tasks/', task, {
+          headers: {
+            'Authorization': `Bearer ${authStore.token}`
+          }
+        })
+        this.tasks.push(response.data)
+      } catch (error: any) {
+        this.error = error.message
+      }
+    },
+    
+    async updateTask(id: number, updates: Partial<Task>) {
+      try {
+        const response = await axios.put(`http://localhost:8000/pending-tasks/${id}/`, updates, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        const index = this.tasks.findIndex(task => task.id === id)
+        if (index !== -1) {
+          this.tasks[index] = response.data
+        }
+      } catch (error: any) {
+        this.error = error.message
+      }
+    },
+    
+    async deleteTask(id: number) {
+      try {
+        await axios.delete(`http://localhost:8000/pending-tasks/${id}/`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        this.tasks = this.tasks.filter(task => task.id !== id)
+      } catch (error: any) {
+        this.error = error.message
+      }
+    },
+
+    async fetchTasksByStatus(status: string) {
+      try {
+        const response = await axios.get(`/pending-tasks/by_status/?status=${status}`)
+        return response.data
+      } catch (error: any) {
+        this.error = error.message
+      }
+    },
+
+    async fetchTasksByPriority(priority: string) {
+      try {
+        const response = await axios.get(`/pending-tasks/by_priority/?priority=${priority}`)
+        return response.data
+      } catch (error: any) {
+        this.error = error.message
       }
     },
 
     async fetchTasksWithFilters(filters: TaskFilters) {
-      this.loading = true
+      const params = new URLSearchParams()
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value)
+      })
+
       try {
-        const params = new URLSearchParams()
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined && value !== '') {
-            params.append(key, String(value))
-          }
-        })
         const response = await axios.get(`/pending-tasks/?${params.toString()}`)
         this.tasks = response.data
-        this.updateTaskStats()
       } catch (error: any) {
         this.error = error.message
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async addTask(task: Omit<Task, 'id' | 'created_at'>) {
-      this.loading = true
-      try {
-        const response = await axios.post('/pending-tasks/', task)
-        await this.fetchTasks()
-        return response.data
-      } catch (error: any) {
-        this.error = error.message
-        throw error
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async updateTask(id: number, task: Partial<Task>) {
-      this.loading = true
-      try {
-        const response = await axios.put(`/pending-tasks/${id}/`, task)
-        await this.fetchTasks()
-        return response.data
-      } catch (error: any) {
-        this.error = error.message
-        throw error
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async deleteTask(id: number) {
-      this.loading = true
-      try {
-        await axios.delete(`/pending-tasks/${id}/`)
-        await this.fetchTasks()
-      } catch (error: any) {
-        this.error = error.message
-        throw error
-      } finally {
-        this.loading = false
-      }
-    },
-
-    updateTaskStats() {
-      this.taskStats = {
-        pending: this.tasks.filter(t => t.status === 'PENDING').length,
-        completed: this.tasks.filter(t => t.status === 'COMPLETED').length
       }
     }
   }
-}) 
+})  

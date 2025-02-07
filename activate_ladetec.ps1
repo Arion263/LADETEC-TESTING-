@@ -1,0 +1,1 @@
+& "C:\Users\Arion263\LADETEC\Scripts\Activate.ps1"

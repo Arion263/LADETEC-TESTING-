@@ -1,0 +1,74 @@
+import { defineStore } from 'pinia'
+import axios from 'axios'
+
+interface AuthState {
+  token: string | null
+  refreshToken: string | null
+  isAuthenticated: boolean
+  userEmail: string | null
+}
+
+export const useAuthStore = defineStore('auth', {
+  state: (): AuthState => ({
+    token: localStorage.getItem('token'),
+    refreshToken: localStorage.getItem('refreshToken'),
+    isAuthenticated: !!localStorage.getItem('token'),
+    userEmail: localStorage.getItem('userEmail')
+  }),
+
+  actions: {
+    async login(email: string, password: string) {
+      try {
+        const response = await axios.post('http://localhost:8000/api/token/', {
+          email,
+          password
+        })
+        
+        this.token = response.data.access
+        this.refreshToken = response.data.refresh
+        this.isAuthenticated = true
+        this.userEmail = email
+        
+        localStorage.setItem('token', response.data.access)
+        localStorage.setItem('refreshToken', response.data.refresh)
+        localStorage.setItem('userEmail', email)
+        
+        return true
+      } catch (error) {
+        this.logout()
+        throw error
+      }
+    },
+
+    async refreshAccessToken() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/token/refresh/', {
+          refresh: this.refreshToken
+        })
+        
+        this.token = response.data.access
+        localStorage.setItem('token', response.data.access)
+        
+        return true
+      } catch (error) {
+        this.logout()
+        throw error
+      }
+    },
+
+    logout() {
+      this.token = null
+      this.refreshToken = null
+      this.isAuthenticated = false
+      this.userEmail = null
+      localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('userEmail')
+    }
+  },
+
+  getters: {
+    getToken: (state) => state.token,
+    isLoggedIn: (state) => state.isAuthenticated
+  }
+}) 

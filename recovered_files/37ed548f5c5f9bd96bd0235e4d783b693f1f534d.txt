@@ -1,0 +1,71 @@
+<template>
+  <v-container class="fill-height">
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="4">
+        <v-card>
+          <v-card-title class="text-center">Iniciar Sesión</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="handleLogin">
+              <v-text-field
+                v-model="credentials.email"
+                label="Email"
+                required
+              />
+              <v-text-field
+                v-model="credentials.password"
+                label="Contraseña"
+                type="password"
+                required
+              />
+              <v-alert
+                v-if="error"
+                type="error"
+                class="mb-4"
+              >
+                {{ error }}
+              </v-alert>
+              <v-btn
+                type="submit"
+                color="primary"
+                block
+                :loading="loading"
+              >
+                Iniciar Sesión
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const credentials = ref({
+  email: '',
+  password: ''
+})
+const loading = ref(false)
+const error = ref('')
+
+const handleLogin = async () => {
+  loading.value = true
+  error.value = ''
+  
+  try {
+    await authStore.login(credentials.value.email, credentials.value.password)
+    router.push('/')
+  } catch (e: any) {
+    error.value = 'Email o contraseña incorrectos'
+  } finally {
+    loading.value = false
+  }
+}
+</script> 

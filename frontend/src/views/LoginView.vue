@@ -16,8 +16,8 @@
                 type="email"
                 prepend-inner-icon="mdi-email"
                 :rules="[
-                  v => !!v || 'El email es requerido',
-                  v => /.+@.+\..+/.test(v) || 'Email debe ser válido'
+                  (v: string) => !!v || 'El email es requerido',
+                  (v: string) => /.+@.+\..+/.test(v) || 'Email debe ser válido'
                 ]"
                 required
               />
@@ -29,7 +29,7 @@
                 prepend-inner-icon="mdi-lock"
                 :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 @click:append-inner="showPassword = !showPassword"
-                :rules="[v => !!v || 'La contraseña es requerida']"
+                :rules="[(v: string) => !!v || 'La contraseña es requerida']"
                 required
               />
 
@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from '@vue/runtime-core'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 

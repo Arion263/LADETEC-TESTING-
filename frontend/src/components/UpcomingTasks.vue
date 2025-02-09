@@ -39,8 +39,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from '@vue/runtime-core'
 import { useTaskStore } from '@/stores/task'
+
+interface Task {
+  id: number
+  due_date: string | null
+  status: string
+  title: string
+}
 
 const store = useTaskStore()
 
@@ -50,12 +57,12 @@ const upcomingTasks = computed(() => {
   nextWeek.setDate(today.getDate() + 7)
 
   return store.tasks
-    .filter(task => {
+    .filter((task: Task) => {
       if (!task.due_date || task.status === 'COMPLETED') return false
       const dueDate = new Date(task.due_date)
       return dueDate >= today && dueDate <= nextWeek
     })
-    .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
+    .sort((a: Task, b: Task) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
 })
 
 const formatDueDate = (date: string | null) => {

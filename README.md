@@ -79,22 +79,3 @@ o
 o
 
 `pnpm dev`
-
-
-## Estructura del Proyecto
-
-### Backend (Django)
-- `backend/` - Directorio principal del backend
-  - `tasks/` - Aplicación de tareas
-  - `users/` - Aplicación de usuarios
-  - `api/` - Configuración de la API
-  - `requirements.txt` - Dependencias del proyecto
-
-### Frontend (Vue)
-- `frontend/` - Directorio principal del frontend
-  - `src/`
-    - `components/` - Componentes Vue
-    - `views/` - Vistas principales
-    - `stores/` - Stores Pinia (auth.ts, task.ts)
-    - `plugins/` - Plugins (axios.ts, vuetify)
-    - `router/` - Configuración de rutas

@@ -18,7 +18,7 @@ bash
 
 ### 2. Configuración del Backend (Django)
 
-####Crear y activar entorno virtual
+#### 2.1. Crear y activar entorno virtual
 
 `python -m venv LADETEC`
 
@@ -34,29 +34,29 @@ cd `LADETEC`
 
 `source venv/bin/activate`
 
-####Instalar dependencias
+#### 2.2. Instalar dependencias
 
 `pip install -r requirements.txt`
 
-####Aplicar migraciones
+#### 2.3. Aplicar migraciones
 
 `python manage.py migrate`
 
-####Crear superusuario (opcional)
+#### 2.4. Crear superusuario (opcional)
 
 `python manage.py createsuperuser`
 
-####Iniciar servidor de desarrollo
+#### 2.5. Iniciar servidor de desarrollo
 
 `python manage.py runserver`
 
 ### 3. Configuración del Frontend (Vue)
 
-####Navegar al directorio frontend
+#### 3.1. Navegar al directorio frontend
 
 `cd frontend`
 
-####Instalar dependencias
+#### 3.2. Instalar dependencias
 
 `npm install`
 
@@ -68,7 +68,7 @@ o
 
 `pnpm install`
 
-####Iniciar servidor de desarrollo
+#### 3.3. Iniciar servidor de desarrollo
 
 `npm run dev`
 

@@ -14,7 +14,7 @@ Sistema de gestión de tareas desarrollado con Vue 3 + TypeScript en el frontend
 
 ### 1. Clonar el Repositorio
 bash
-git `clone <https://github.com/Arion263/LADETEC-TESTING-.git>`
+`git clone https://github.com/Arion263/LADETEC-TESTING-.git`
 
 cd `LADETEC`
 

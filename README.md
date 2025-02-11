@@ -16,21 +16,21 @@ Sistema de gestión de tareas desarrollado con Vue 3 + TypeScript en el frontend
 bash
 `git clone https://github.com/Arion263/LADETEC-TESTING-.git`
 
-cd `LADETEC`
-
 ### 2. Configuración del Backend (Django)
 
 Crear y activar entorno virtual
 
 `python -m venv LADETEC`
 
+cd `LADETEC`
+
 `cd backend`
 
-En Windows
+-En Windows
 
 `LADETEC\Scripts\activate` o utilizar el comando en shell $activate_ladetec.ps1 adjunto para activar el ambiente en la direccion predeterminada
 
-En Linux/Mac
+-En Linux/Mac
 
 `source venv/bin/activate`
 

@@ -14,49 +14,49 @@ Sistema de gestión de tareas desarrollado con Vue 3 + TypeScript en el frontend
 
 ### 1. Clonar el Repositorio
 bash
-git clone <https://github.com/Arion263/LADETEC-TESTING->
-
-cd `LADETEC`
+`git clone https://github.com/Arion263/LADETEC-TESTING-.git`
 
 ### 2. Configuración del Backend (Django)
 
-Crear y activar entorno virtual
+#### 2.1. Crear y activar entorno virtual
 
 `python -m venv LADETEC`
 
+cd `LADETEC`
+
 `cd backend`
 
-En Windows
+-En Windows
 
 `LADETEC\Scripts\activate` o utilizar el comando en shell $activate_ladetec.ps1 adjunto para activar el ambiente en la direccion predeterminada
 
-En Linux/Mac
+-En Linux/Mac
 
 `source venv/bin/activate`
 
-Instalar dependencias
+#### 2.2. Instalar dependencias
 
 `pip install -r requirements.txt`
 
-Aplicar migraciones
+#### 2.3. Aplicar migraciones
 
 `python manage.py migrate`
 
-Crear superusuario (opcional)
+#### 2.4. Crear superusuario (opcional)
 
 `python manage.py createsuperuser`
 
-Iniciar servidor de desarrollo
+#### 2.5. Iniciar servidor de desarrollo
 
 `python manage.py runserver`
 
 ### 3. Configuración del Frontend (Vue)
 
-Navegar al directorio frontend
+#### 3.1. Navegar al directorio frontend
 
 `cd frontend`
 
-Instalar dependencias
+#### 3.2. Instalar dependencias
 
 `npm install`
 
@@ -68,7 +68,7 @@ o
 
 `pnpm install`
 
-Iniciar servidor de desarrollo
+#### 3.3. Iniciar servidor de desarrollo
 
 `npm run dev`
 
@@ -79,22 +79,3 @@ o
 o
 
 `pnpm dev`
-
-
-## Estructura del Proyecto
-
-### Backend (Django)
-- `backend/` - Directorio principal del backend
-  - `tasks/` - Aplicación de tareas
-  - `users/` - Aplicación de usuarios
-  - `api/` - Configuración de la API
-  - `requirements.txt` - Dependencias del proyecto
-
-### Frontend (Vue)
-- `frontend/` - Directorio principal del frontend
-  - `src/`
-    - `components/` - Componentes Vue
-    - `views/` - Vistas principales
-    - `stores/` - Stores Pinia (auth.ts, task.ts)
-    - `plugins/` - Plugins (axios.ts, vuetify)
-    - `router/` - Configuración de rutas
